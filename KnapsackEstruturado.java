@@ -1,17 +1,24 @@
-import java.util.Arrays;
+
+// import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
-public class Knapsack {
+public class KnapsackEstruturado {
     private int capacidadeTotal;
     private int numItens;
     private int[] valores;
     private int[] pesos;
     private int[][] tabelaDP;
 
+    // Contadores de análise da complexidade
+    private int mainConditionCounter = 0;
+    private int backtrackConditionCounter = 0;
+
     /**
      * Construtor para inicializar tudo por parametros.
      */
-    public Knapsack(int c, int n, int[] v, int[] p) {
+    public KnapsackEstruturado(int c, int n, int[] v, int[] p) {
         this.capacidadeTotal = c;
         this.numItens = n;
         this.valores = v;
@@ -25,12 +32,14 @@ public class Knapsack {
      * 
      * @param doRandom flag para gerar os valores e pesos aleatoriamente
      */
-    public Knapsack(int c, int n, boolean doRandom) {
+    public KnapsackEstruturado(int c, int n, boolean doRandom) {
+        Scanner scan = new Scanner(System.in);
         this.capacidadeTotal = c;
         this.numItens = n;
-        this.introduzirValores(doRandom);
-        this.introduzirPesos(doRandom);
+        this.introduzirValores(doRandom, scan);
+        this.introduzirPesos(doRandom, scan);
         this.tabelaDP = new int[numItens + 1][capacidadeTotal + 1];
+        scan.close();
     }
 
     /**
@@ -38,16 +47,16 @@ public class Knapsack {
      * 
      * @param doRandom flag para gerar os valores e pesos aleatoriamente
      */
-    public Knapsack(boolean doRandom) {
+    public KnapsackEstruturado(boolean doRandom) {
         Scanner scan = new Scanner(System.in);
         System.out.print("Capacidade total da mochila: ");
         this.capacidadeTotal = scan.nextInt();
         System.out.print("Numero total de itens: ");
         this.numItens = scan.nextInt();
-        scan.close();
-        this.introduzirValores(doRandom);
-        this.introduzirPesos(doRandom);
+        this.introduzirValores(doRandom, scan);
+        this.introduzirPesos(doRandom, scan);
         this.tabelaDP = new int[numItens + 1][capacidadeTotal + 1];
+        scan.close();
     }
 
     /**
@@ -67,8 +76,19 @@ public class Knapsack {
      * https://medium.freecodecamp.org/how-to-solve-the-knapsack-problem-with-dynamic-programming-eb88c706d3cf
      * The Knapsack Problem using shortest paths (2011) [livro do moodle, só este é
      * que importa]
+     * 
+     * 
+     * UPDATE: Counters para análise da complexidade já foram adicionados. Como o
+     * código que temos aqui tem poucas condições, praticamente só existem counters
+     * nos ciclos. No entanto, é preciso explicar isto no relatório na mesma.
+     * 
+     * Neste caso, temos 1 condição para cada ciclo e uma condição dentro do segundo
+     * ciclo do algoritmo principal que é sempre avaliada ou seja, counter+1 para
+     * cada iteração de cada ciclo 'for' e counter+2 para cada iteração do segundo
+     * ciclo 'for' do algoritmo principal.
      */
     public int algoritmoPrincipal() {
+        this.mainConditionCounter = 0; // contador de condições realizadas no algoritmo.
         /*
          * Preencher os casos triviais (inicializar a 0):
          * 
@@ -80,16 +100,17 @@ public class Knapsack {
          */
         for (int c = 0; c < this.capacidadeTotal + 1; c++) {
             this.tabelaDP[0][c] = 0;
+            this.mainConditionCounter++; // +1 condição por cada iteração do ciclo
         }
         for (int l = 0; l < this.numItens + 1; l++) {
             this.tabelaDP[l][0] = 0;
+            this.mainConditionCounter++; // +1 condição por cada iteração do ciclo
         }
 
-        /* Onde a magia acontece */
+        /* Algoritmo Principal */
         for (int item = 1; item <= this.numItens; item++) {
             for (int capacidade = 1; capacidade <= this.capacidadeTotal; capacidade++) {
-                // Pesquisar o valor que já existe dentro da mochila v
-                int valorMaximoExistente = tabelaDP[item - 1][capacidade];
+                int valorMaximoExistente = tabelaDP[item - 1][capacidade]; // Valor dentro da mochila
                 int novoValorMaximo = 0; // Valor atual dentro da mochila (ainda vai ser calculado)
 
                 int pesoItemAtual = pesos[item - 1]; // Pesquisar o peso do item atual
@@ -98,20 +119,20 @@ public class Knapsack {
 
                 if (capacidade >= pesoItemAtual) { // Verificar se existe espaço disponível para o item atual
                     novoValorMaximo = valores[item - 1]; // Adicionar o valor do item escolhido
-                    // Subtrair o peso do item à capacidade da mochila
-                    int capacidadeRestante = capacidade - pesoItemAtual;
+                    int capacidadeRestante = capacidade - pesoItemAtual; // Subtrair o peso à capacidade da mochila
 
-                    // Adicionar o valor já existente na mochila
-                    novoValorMaximo += this.tabelaDP[item - 1][capacidadeRestante];
+                    novoValorMaximo += this.tabelaDP[item - 1][capacidadeRestante]; // Atualizar o valor na mochila
                 }
-                // Escolher o maior dos dois valores
-                this.tabelaDP[item][capacidade] = Math.max(valorMaximoExistente, novoValorMaximo);
+                this.tabelaDP[item][capacidade] = // Escolher o maior dos dois valores
+                        Math.max(valorMaximoExistente, novoValorMaximo);
                 /*
                  * NOTA: quando não há espaço disponível na mochila, o item não é escolhido ou
                  * seja não é adicionado valor. É desta forma que depois se vai conseguir saber
                  * quais os itens que foram selecionados.
                  */
+                mainConditionCounter += 2; // +1 por cada iteração do ciclo +1 pela condição intrínseca (ver nota)
             }
+            mainConditionCounter++; // +1 por cada iteração do ciclo
         }
         return this.tabelaDP[this.numItens][this.capacidadeTotal];
     }
@@ -130,8 +151,18 @@ public class Knapsack {
      * 
      * Link sobre isto (adicionar tambem):
      * http://www.mafy.lut.fi/study/DiscreteOpt/DYNKNAP.pdf
+     * 
+     * 
+     * UPDATE: Counters para análise da complexidade já foram adicionados. Como o
+     * código que temos aqui tem poucas condições, praticamente só existem counters
+     * nos ciclos. No entanto, é preciso explicar isto no relatório na mesma.
+     * 
+     * Neste caso, temos 1 condição para cada iteração ciclo e uma condição dentro
+     * desse ciclo que será sempre avaliada ou seja, counter+2 para cada iteração do
+     * ciclo e a única condição avaliada.
      */
     public int[] algoritmoBacktracking() {
+        this.backtrackConditionCounter = 0;
         int[] itensEscolhidos = new int[numItens];
         int capacidadeMochila = capacidadeTotal;
         for (int item = numItens; item > 0; item--) {
@@ -141,6 +172,7 @@ public class Knapsack {
             } else {
                 itensEscolhidos[item - 1] = 0; // Item não foi escolhido
             }
+            this.backtrackConditionCounter += 2; // +1 por cada iteração do ciclo +1 pela condição intrínseca
         }
         return itensEscolhidos;
     }
@@ -150,8 +182,10 @@ public class Knapsack {
          * exemplo do problema: int capacidadeTotal = 10; int numItens = 4; int[]
          * valores = {10, 40, 30, 50}; int[] pesos = {5, 4, 6, 3};
          */
-        // Instância para INPUTS e para correr o ALGORITMO
-        Knapsack knapsack = new Knapsack(10, 4, new int[] { 10, 40, 30, 50 }, new int[] { 5, 4, 6, 3 });
+        KnapsackEstruturado knapsack = // Instância para INPUTS e para correr o ALGORITMO
+                // new KnapsackEstruturado(10, 4, new int[] { 10, 40, 30, 50 }, new int[] { 5,
+                // 4, 6, 3 });
+                new KnapsackEstruturado(true);
 
         long startTime = System.nanoTime(); // Variavel para calcular o tempo de execução
         int valorTotal = knapsack.algoritmoPrincipal(); // Algoritmo principal
@@ -171,8 +205,11 @@ public class Knapsack {
         }
         System.out.println("]\n----------------");
         System.out.println("Tempos de Execucao: \n" + "\tAlgoritmo Principal: "
-                + Math.floor((mainTime / 1000000.0) * 1000) / 1000 + " ms" + "\n\t2o Algoritmo: "
+                + Math.floor((mainTime / 1000000.0) * 1000) / 1000 + " ms" + "\n\tAlgoritmo Backtracking: "
                 + Math.floor((backtrackingTime / 1000000.0) * 1000) / 1000 + " ms\n----------------");
+        System.out.println(
+                "Numero de condicoes executadas: \n" + "\tAlgoritmo Principal: " + knapsack.getContadorPrincipal()
+                        + "\n\tAlgoritmo Backtracking: " + knapsack.getContadorBacktracking() + "\n----------------");
         // System.out.println("Tabela: \n" + Arrays.deepToString(knapsack.getTabela()));
     }
 
@@ -181,21 +218,19 @@ public class Knapsack {
      * 
      * @param doRandom flag para gerar os valores e pesos aleatoriamente
      */
-    public void introduzirValores(boolean doRandom) {
+    public void introduzirValores(boolean doRandom, Scanner scan) {
         this.valores = new int[numItens];
         if (doRandom) {
             for (int i = 0; i < this.numItens; i++) {
                 this.valores[i] = (int) Math.floor(Math.random() * 10);
             }
         } else {
-            Scanner scan = new Scanner(System.in);
             System.out.println("Numero de Itens: " + this.numItens);
             System.out.println("Valor para cada item:");
             for (int i = 0; i < this.numItens; i++) {
                 System.out.print((i + 1) + ". -> ");
                 this.valores[i] = scan.nextInt();
             }
-            scan.close();
         }
         System.out.println("Valores Adicionados.\n----------------------------------------");
         this.tabelaDP = new int[numItens + 1][capacidadeTotal + 1];
@@ -206,21 +241,19 @@ public class Knapsack {
      * 
      * @param doRandom flag para gerar os valores e pesos aleatoriamente
      */
-    public void introduzirPesos(boolean doRandom) {
+    public void introduzirPesos(boolean doRandom, Scanner scan) {
         this.pesos = new int[numItens];
         if (doRandom) {
             for (int i = 0; i < this.numItens; i++) {
                 this.pesos[i] = (int) Math.floor(Math.random() * 10);
             }
         } else {
-            Scanner scan = new Scanner(System.in);
             System.out.println("Numero de Itens: " + this.numItens);
             System.out.println("Peso de cada item:");
             for (int i = 0; i < this.numItens; i++) {
                 System.out.print((i + 1) + ". -> ");
                 this.pesos[i] = scan.nextInt();
             }
-            scan.close();
         }
         System.out.println("Pesos Adicionados.\n----------------------------------------");
         this.tabelaDP = new int[numItens + 1][capacidadeTotal + 1];
@@ -235,20 +268,25 @@ public class Knapsack {
     }
 
     /**
-     * Faz reset dos valores e pesos, tal como da tabela principal quando se muda o
-     * nº Itens.
-     */
-    public void setNumItens(int n) {
-        this.numItens = n;
-        this.introduzirValores(false);
-        this.introduzirPesos(false);
-        this.tabelaDP = new int[this.numItens + 1][this.capacidadeTotal + 1];
-    }
-
-    /**
      * Retornar a tabela de resolução do problema.
      */
     public int[][] getTabela() {
         return this.tabelaDP;
+    }
+
+    /**
+     * Retorna o contador de condições para análise de complexidade do algoritmo
+     * principal.
+     */
+    public int getContadorPrincipal() {
+        return this.mainConditionCounter;
+    }
+
+    /**
+     * Retorna o contador de condições para análise de complexidade do algoritmo de
+     * backtracking.
+     */
+    public int getContadorBacktracking() {
+        return this.backtrackConditionCounter;
     }
 }
