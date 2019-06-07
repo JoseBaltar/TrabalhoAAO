@@ -1,7 +1,5 @@
 
-// import java.util.Arrays;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class KnapsackEstruturado {
@@ -121,7 +119,12 @@ public class KnapsackEstruturado {
                     novoValorMaximo = valores[item - 1]; // Adicionar o valor do item escolhido
                     int capacidadeRestante = capacidade - pesoItemAtual; // Subtrair o peso à capacidade da mochila
 
-                    novoValorMaximo += this.tabelaDP[item - 1][capacidadeRestante]; // Atualizar o valor na mochila
+                    novoValorMaximo += this.tabelaDP[item - 1][capacidadeRestante];
+                    /*
+                     * NOTA: O valor adicionado acima refere-se ao valor dos items que já existem na
+                     * mochila que poderão ser adicionados se a capacidade restante (com o item
+                     * atual incluido) for suficiente
+                     */
                 }
                 this.tabelaDP[item][capacidade] = // Escolher o maior dos dois valores
                         Math.max(valorMaximoExistente, novoValorMaximo);
@@ -145,9 +148,14 @@ public class KnapsackEstruturado {
      * item e na capacidade máxima, se houve alteração do valor dentro da mochila
      * então significa que o item foi escolhido (neste caso, o último). Para a
      * próxima iteração, somente quando o item foi escolhido, deve subtrair-se a
-     * capacidade desse item à capacidade total da mochila. TL;DR k = item atual; n
-     * = total items; g = capacidade da mochila Repeat for k = n, n - 1, ..., 1; |
-     * If f(k,g) != f(k-1,g), item k is in the selection Exemplo no link abaixo.
+     * capacidade desse item à capacidade total da mochila.
+     * <p>
+     * TL;DR k = item atual; n = total items; g = capacidade da mochila
+     * <p>
+     * Repeat for k = n, n - 1, ..., 1; | If f(k,g) != f(k-1,g), item k is in the
+     * selection
+     * <p>
+     * Exemplo no link abaixo.
      * 
      * Link sobre isto (adicionar tambem):
      * http://www.mafy.lut.fi/study/DiscreteOpt/DYNKNAP.pdf
@@ -178,39 +186,66 @@ public class KnapsackEstruturado {
     }
 
     public static void main(String args[]) {
-        /*
-         * exemplo do problema: int capacidadeTotal = 10; int numItens = 4; int[]
-         * valores = {10, 40, 30, 50}; int[] pesos = {5, 4, 6, 3};
+        /**
+         * <pre>
+         * EXEMPLOS
+         * 4 itens: int capacidadeTotal = 8;
+         *          int numItens = 4;
+         *          int[] valores = {15, 10, 9, 5}; 
+         *          int[] pesos = {1, 5, 3, 4};
+         * </pre>
          */
         KnapsackEstruturado knapsack = // Instância para INPUTS e para correr o ALGORITMO
-                // new KnapsackEstruturado(10, 4, new int[] { 10, 40, 30, 50 }, new int[] { 5,
-                // 4, 6, 3 });
-                new KnapsackEstruturado(true);
+                // new KnapsackEstruturado(20, 8, new int[] { 15, 10, 9, 5 }, new int[] { 1, 5,
+                // 3, 4 });
+                new KnapsackEstruturado(850, 50,
+                        new int[] { 360, 83, 59, 130, 431, 67, 230, 52, 93, 125, 670, 892, 600, 38, 48, 147, 78, 256,
+                                63, 17, 120, 164, 432, 35, 92, 110, 22, 42, 50, 323, 514, 28, 87, 73, 78, 15, 26, 78,
+                                210, 36, 85, 189, 274, 43, 33, 10, 19, 389, 276, 312 },
+                        new int[] { 7, 0, 30, 22, 80, 94, 11, 81, 70, 64, 59, 18, 0, 36, 3, 8, 15, 42, 9, 0, 42, 47, 52,
+                                32, 26, 48, 55, 6, 29, 84, 2, 4, 18, 56, 7, 29, 93, 44, 71, 3, 86, 66, 31, 65, 0, 79,
+                                20, 65, 52, 13 });
 
         long startTime = System.nanoTime(); // Variavel para calcular o tempo de execução
         int valorTotal = knapsack.algoritmoPrincipal(); // Algoritmo principal
         long mainTime = System.nanoTime() - startTime; // Calcular o tempo de execução
-        System.out.println("Valor total dentro da mochila: " + valorTotal + "\n----------------");
 
         startTime = System.nanoTime(); // Reset para calcular o tempo do proximo algoritmo
         int[] itensEscolhidos = knapsack.algoritmoBacktracking();
         long backtrackingTime = System.nanoTime() - startTime;
 
         // OUTPUTS
-        System.out.print("Itens escolhidos: \n[ ");
-        for (int i = 0; i < itensEscolhidos.length; i++) {
-            if (itensEscolhidos[i] == 1) {
-                System.out.print((i + 1) + " ");
-            }
-        }
-        System.out.println("]\n----------------");
+        // Informações
+        System.out.println("--------------------------------");
         System.out.println("Tempos de Execucao: \n" + "\tAlgoritmo Principal: "
                 + Math.floor((mainTime / 1000000.0) * 1000) / 1000 + " ms" + "\n\tAlgoritmo Backtracking: "
-                + Math.floor((backtrackingTime / 1000000.0) * 1000) / 1000 + " ms\n----------------");
-        System.out.println(
-                "Numero de condicoes executadas: \n" + "\tAlgoritmo Principal: " + knapsack.getContadorPrincipal()
-                        + "\n\tAlgoritmo Backtracking: " + knapsack.getContadorBacktracking() + "\n----------------");
-        // System.out.println("Tabela: \n" + Arrays.deepToString(knapsack.getTabela()));
+                + Math.floor((backtrackingTime / 1000000.0) * 1000) / 1000 + " ms");
+        System.out.println("Numero de condicoes executadas: \n" + "\tAlgoritmo Principal: "
+                + knapsack.getContadorPrincipal() + "\n\tAlgoritmo Backtracking: " + knapsack.getContadorBacktracking()
+                + "\n--------------------------------");
+        // Resultados
+        System.out.print("Itens escolhidos: \n[ ");
+        int pesoTotal = 0;
+        for (int i = 0; i < itensEscolhidos.length; i++) {
+            if (itensEscolhidos[i] == 1) {
+                System.out.print((i + 1));
+                if (i != itensEscolhidos.length - 1) {
+                    System.out.print(", ");
+                }
+                pesoTotal += knapsack.pesos[i];
+            }
+        }
+        System.out.println("]\n--------------------------------");
+        System.out.println("Capacidade da mochila: " + pesoTotal);
+        System.out.println("Total peso da mochila utilizado: " + pesoTotal);
+        System.out.println("Valor total dentro da mochila: " + valorTotal);
+        System.out.println("--------------------------------");
+        /*
+         * Imprimir a tabela de resolução do problema:
+         * 
+         * for (int[] linha : knapsack.getTabela()) {
+         * System.out.println(Arrays.toString(linha)); }
+         */
     }
 
     /**
