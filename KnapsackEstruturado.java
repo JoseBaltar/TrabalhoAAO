@@ -72,16 +72,11 @@ public class KnapsackEstruturado {
      * item que está a ser verificado em cada uma dessas colunas. É isto que faz
      * este algoritmo funcionar, porque desta maneira fica possível fazer
      * 'backtracking' das escolhas anteriores.]
-     * 
-     * Links para a bibliografia sobre este algoritmo:
-     * https://medium.freecodecamp.org/how-to-solve-the-knapsack-problem-with-dynamic-programming-eb88c706d3cf
-     * The Knapsack Problem using shortest paths (2011) [livro do moodle, só este é
-     * que importa]
-     * 
+     * <p>
      * 
      * UPDATE: Counters para análise da complexidade já foram adicionados. Como o
      * código que temos aqui tem poucas condições, praticamente só existem counters
-     * nos ciclos. No entanto, é preciso explicar isto no relatório na mesma.
+     * nos ciclos.
      * 
      * Neste caso, temos 1 condição para cada ciclo e uma condição dentro do segundo
      * ciclo do algoritmo principal que é sempre avaliada ou seja, counter+1 para
@@ -161,15 +156,10 @@ public class KnapsackEstruturado {
      * Repeat for k = n, n - 1, ..., 1; | If f(k,g) != f(k-1,g), item k is in the
      * selection
      * <p>
-     * Exemplo no link abaixo.
      * 
-     * Link sobre isto (adicionar tambem):
-     * http://www.mafy.lut.fi/study/DiscreteOpt/DYNKNAP.pdf
-     * 
-     * 
-     * UPDATE: Counters para análise da complexidade já foram adicionados. Como o
+     * NOTA: Counters para análise da complexidade já foram adicionados. Como o
      * código que temos aqui tem poucas condições, praticamente só existem counters
-     * nos ciclos. No entanto, é preciso explicar isto no relatório na mesma.
+     * nos ciclos.
      * 
      * Neste caso, temos 1 condição para cada iteração ciclo e uma condição dentro
      * desse ciclo que será sempre avaliada ou seja, counter+2 para cada iteração do
@@ -309,15 +299,6 @@ public class KnapsackEstruturado {
     }
 
     public static void main(String args[]) {
-        /**
-         * <pre>
-         * EXEMPLOS
-         * 4 itens: int capacidadeTotal = 8;
-         *          int numItens = 4;
-         *          int[] valores = {15, 10, 9, 5}; 
-         *          int[] pesos = {1, 5, 3, 4};
-         * </pre>
-         */
         KnapsackEstruturado knapsack = // Instância para INPUTS e para correr o ALGORITMO
                 // new KnapsackEstruturado(7, 3, new int[] { 8, 4, 2 }, new int[] { 1, 2, 3 });
                 // new KnapsackEstruturado(7, 6, new int[] { 3, 10, 6, 8, 9, 7 }, new int[] { 1,
