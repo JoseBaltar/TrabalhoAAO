@@ -320,16 +320,18 @@ public class KnapsackEstruturado {
 
     public static void main(String args[]) {
 		
-		final String usage = "Utilização:\n"
-								+ "Introduzir informação customizada para a capacidade da mochila e numero de items:"
-								+ "> java KnapsackEstruturado <capacidadeMochila> <numeroDeItems> <gerarValoredAleatorios = true | false>\n"
-								+ "Utilizar valores por defeito para a mochila e numero de items:"
-								+ "> java KnapsackEstruturado <gerarValoresAleatorios = true | false>\n"
-								+ "Executar um exemplo do Knapsack Problem com tudo por defeito:"
-								+ "> java KnapsackEstruturado\n";
+		final String usage = "\nUSAGE\n\n"
+								+ "Introduzir informacao customizada para a capacidade da mochila e numero de items:\n\n"
+								+ "\t> java KnapsackEstruturado <capacidadeMochila> <numeroDeItems> <gerarValoredAleatorios = true | false>\n\n"
+								+ "Utilizar valores por defeito para a mochila e numero de items:\n\n"
+								+ "\t> java KnapsackEstruturado <gerarValoresAleatorios = true | false>\n\n"
+								+ "Executar um exemplo do Knapsack Problem com tudo por defeito:\n\n"
+								+ "\t> java KnapsackEstruturado\n\n"
+								+ "Exemplo de utilizacao:\n\n"
+								+ "\t> java KnapsackEstruturado 7 6 true\n";
 		KnapsackEstruturado knapsack = null;
 		// ## INICIALIZAÇÃO
-		if (args.length == 1 && args[0].equalsIgnoreCase("--help") {
+		if (args.length == 1 && args[0].equalsIgnoreCase("--help")) {
 			System.out.println(usage);
 			System.exit(1);
 		} else if (args.length == 3) {
