@@ -329,7 +329,10 @@ public class KnapsackEstruturado {
 								+ "> java KnapsackEstruturado\n";
 		KnapsackEstruturado knapsack = null;
 		// ## INICIALIZAÇÃO
-		if (args.length == 3) {
+		if (args.length == 1 && args[0].equalsIgnoreCase("--help") {
+			System.out.println(usage);
+			System.exit(1);
+		} else if (args.length == 3) {
 			try {
 				int bagCap = Integer.parseInt(args[0]),
 					 numItems = Integer.parseInt(args[1]);
