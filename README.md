@@ -1,4 +1,4 @@
-# TrabalhoAAO
+# Projeto Análise Algoritmica e Otimização - 2018/2019
 
 ### Algoritmo extremamente eficaz que mudará a sua vida por completo!
 
